@@ -1,0 +1,1 @@
+-I"D:/pico-sdk/lib/mbedtls/include" -I"D:/pico-sdk/lib/mbedtls/3rdparty/everest/include" -I"D:/pico-sdk/lib/mbedtls/library" -I"D:/pico-sdk/lib/mbedtls/3rdparty/everest/include/everest" -I"D:/pico-sdk/lib/mbedtls/3rdparty/everest/include/everest/kremlib" -I"D:/sumobot/build/_deps/picotool-build/lib/mbedtls/library"
