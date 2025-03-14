@@ -16,7 +16,6 @@ pico_sdk_init()
 # Add executable with all source files
 add_executable(${PROJECT_NAME}
     main.cpp
-    ir-sensor.cpp
 )
 
 # Include directory for the header file

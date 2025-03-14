@@ -1,5 +1,0 @@
-D:/sumobot/build/_deps/picotool/picotool.exe
-D:/sumobot/build/_deps/picotool/picotoolTargets.cmake
-D:/sumobot/build/_deps/picotool/picotoolTargets-release.cmake
-D:/sumobot/build/_deps/picotool/picotoolConfig.cmake
-D:/sumobot/build/_deps/picotool/picotoolConfigVersion.cmake
