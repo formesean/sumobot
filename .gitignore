@@ -3,3 +3,5 @@
 
 schematic/sumobot/sumobot-backups
 schematic/sumobot/fp-info-cache
+
+3d-model/*.gcode
