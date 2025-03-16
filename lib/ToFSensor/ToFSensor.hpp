@@ -3,18 +3,21 @@
 
 #include <Arduino.h>
 #include <Wire.h>
-#include <VL53L0X.h>
+#include "Adafruit_VL53L0X.h"
 
 class ToFSensor
 {
 public:
-  ToFSensor();
-  bool begin();
+  ToFSensor(uint8_t shutdownPin);
+  bool begin(uint8_t address);
+  void setAddress(uint8_t newAddress);
   int readDistance();
-  bool hasTimeout();
 
 private:
-  VL53L0X _sensor;
+  Adafruit_VL53L0X _sensor;
+  VL53L0X_RangingMeasurementData_t _measure;
+  uint8_t _shutdownPin;
+  uint8_t _address;
 };
 
 #endif

@@ -1,27 +1,40 @@
 #include "ToFSensor.hpp"
 
-ToFSensor::ToFSensor() {}
+ToFSensor::ToFSensor(uint8_t shutdownPin) : _shutdownPin(shutdownPin) {}
 
-bool ToFSensor::begin()
+bool ToFSensor::begin(uint8_t address)
 {
-  Wire.begin();
-  if (!_sensor.init())
+  _address = address;
+
+  pinMode(_shutdownPin, OUTPUT);
+  digitalWrite(_shutdownPin, LOW);
+  delay(10);
+  digitalWrite(_shutdownPin, HIGH);
+  delay(10);
+
+  if (!_sensor.begin(_address))
   {
+    Serial.print(F("Failed to initialize ToF sensor at address 0x"));
+    Serial.println(_address, HEX);
     return false;
   }
-  _sensor.setTimeout(500);
-  _sensor.startContinuous();
+
   return true;
+}
+
+void ToFSensor::setAddress(uint8_t newAddress)
+{
+  _address = newAddress;
 }
 
 int ToFSensor::readDistance()
 {
-  return _sensor.readRangeContinuousMillimeters();
-}
-
-bool ToFSensor::hasTimeout()
-{
-  return _sensor.timeoutOccurred();
+  _sensor.rangingTest(&_measure, false);
+  if (_measure.RangeStatus != 4)
+  {
+    return _measure.RangeMilliMeter;
+  }
+  return -1; // Out of range
 }
 
 // EOF
