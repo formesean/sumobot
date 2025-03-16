@@ -1,50 +1,88 @@
-#include <Arduino.h>
-#include "../lib/Motors/Motors.hpp"
 #include "../lib/ToFSensor/ToFSensor.hpp"
-#include "../lib/LED/LED.hpp"
+#include "../lib/Motors/Motors.hpp"
 
-// Motors Pin Config
+// TB6612FNG Motor Drivers
 #define IN1 7
 #define IN2 8
 #define IN3 9
 #define IN4 10
 #define ENA 5
 #define ENB 6
+#define SPEED 128
 
-#define SPEED 150
+Motors motors1(IN1, IN2, IN3, IN4, ENA, ENB);
+Motors motors2(IN1, IN2, IN3, IN4, ENA, ENB);
 
-Motors motors(IN1, IN2, IN3, IN4, ENA, ENB);
-ToFSensor tof;
+// VL53L0X ToF Sensors
+#define LOX1_ADDRESS 0x30
+#define LOX2_ADDRESS 0x31
 
-void setup()
+#define SHT_LOX1 2
+#define SHT_LOX2 3
+
+ToFSensor sensor1(SHT_LOX1);
+ToFSensor sensor2(SHT_LOX2);
+
+/*===================================Motor Driver Test=====================================*/
+/*void setup()
+{
+  motors1.begin();
+  motors2.begin();
+}
+
+void loop()
+{
+  motors1.forward(SPEED);
+  motors2.forward(SPEED);
+  delay(5000);
+
+  motors1.backward(SPEED);
+  motors2.backward(SPEED);
+  delay(5000);
+
+  motors1.left(SPEED);
+  motors2.left(SPEED);
+  delay(5000);
+
+  motors1.right(SPEED);
+  motors2.right(SPEED);
+  delay(5000);
+}*/
+
+/*===================================ToF Sensor Test=====================================*/
+/*void setup()
 {
   Serial.begin(9600);
+  while (!Serial)
+    delay(1);
 
-  motors.begin();
+  Serial.println(F("Initializing ToF Sensors..."));
 
-  if (!tof.begin())
+  if (!sensor1.begin(LOX1_ADDRESS))
   {
-    Serial.println("Failed");
+    Serial.println(F("Failed to initialize Sensor 1"));
+    while (1)
+      ;
+  }
+
+  if (!sensor2.begin(LOX2_ADDRESS))
+  {
+    Serial.println(F("Failed to initialize Sensor 2"));
+    while (1)
+      ;
   }
 }
 
 void loop()
 {
-  // motors.forward(SPEED);
-  // delay(1000);
-  // motors.backward(SPEED);
-  // delay(1000);
-  // motors.left(SPEED);
-  // delay(1000);
-  // motors.right(SPEED);
-  // delay(1000);
-  int distance = tof.readDistance();
+  int distance1 = sensor1.readDistance();
+  int distance2 = sensor2.readDistance();
 
-  if (tof.hasTimeout())
-    Serial.println("VL53L0X timeout!");
+  Serial.print(F("1: "));
+  Serial.print(distance1 == -1 ? F("Out of range") : String(distance1));
 
-  Serial.print("Distance: ");
-  Serial.print(distance);
-  Serial.println(" mm");
+  Serial.print(F(" 2: "));
+  Serial.println(distance2 == -1 ? F("Out of range") : String(distance2));
+
   delay(100);
-}
+}*/
