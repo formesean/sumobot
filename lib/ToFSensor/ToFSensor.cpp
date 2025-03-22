@@ -19,6 +19,8 @@ bool ToFSensor::begin(uint8_t address)
     return false;
   }
 
+  _sensor.startRangeContinuous();
+
   return true;
 }
 

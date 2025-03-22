@@ -37,24 +37,28 @@ void Motors::left(uint8_t speed)
 {
   digitalWrite(_in1, HIGH);
   digitalWrite(_in2, LOW);
-  digitalWrite(_in3, HIGH);
-  digitalWrite(_in4, LOW);
-  analogWrite(_ena, speed);
+  digitalWrite(_in3, LOW);
+  digitalWrite(_in4, HIGH);
+  analogWrite(_ena, 0);
   analogWrite(_enb, speed);
 }
 
 void Motors::right(uint8_t speed)
 {
-  digitalWrite(_in1, LOW);
-  digitalWrite(_in2, HIGH);
+  digitalWrite(_in1, HIGH);
+  digitalWrite(_in2, LOW);
   digitalWrite(_in3, LOW);
   digitalWrite(_in4, HIGH);
   analogWrite(_ena, speed);
-  analogWrite(_enb, speed);
+  analogWrite(_enb, 0);
 }
 
 void Motors::stop()
 {
+  digitalWrite(_in1, LOW);
+  digitalWrite(_in2, LOW);
+  digitalWrite(_in3, LOW);
+  digitalWrite(_in4, LOW);
   analogWrite(_ena, 0);
   analogWrite(_enb, 0);
 }
