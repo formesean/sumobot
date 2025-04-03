@@ -1,292 +1,212 @@
-#include "../lib/ToFSensor/ToFSensor.hpp"
-#include "../lib/Motors/Motors.hpp"
+#include <Arduino.h>
+#include <Wire.h>
+#include "Adafruit_VL53L0X.h"
 
-// TB6612FNG Motor Drivers
-#define IN4 4
-#define IN3 3
-#define IN2 7
-#define IN1 8
-#define ENA 5
-#define ENB 6
-#define SPEED 150
+// TB6612FNG
+#define PWMA 32
+#define AIN2 33
+#define AIN1 25
+#define STBY 26
+#define BIN1 14
+#define BIN2 27
+#define PWMB 12
+#define SPEED 1023
 
-Motors motors(IN1, IN2, IN4, IN3, ENA, ENB);
+#define PWM_CHANNEL_A 0
+#define PWM_CHANNEL_B 1
+#define PWM_FREQ 15000
+#define PWM_RESOLUTION 10
 
-// VL53L0X ToF Sensors
+// VL53L0X
 #define LOX1_ADDRESS 0x30
 #define LOX2_ADDRESS 0x31
+#define SHT_LOX1 19
+#define SHT_LOX2 18
 
-#define SHT_LOX1 A2
-#define SHT_LOX2 A3
+Adafruit_VL53L0X lox1 = Adafruit_VL53L0X();
+Adafruit_VL53L0X lox2 = Adafruit_VL53L0X();
+VL53L0X_RangingMeasurementData_t measure1;
+VL53L0X_RangingMeasurementData_t measure2;
 
-ToFSensor sensor1(SHT_LOX1);
-ToFSensor sensor2(SHT_LOX2);
+// TPR-105F
+#define IR1 35
+#define IR2 34
 
-// TRP-105F Sensors
-#define IR1_THRESHOLD 855
-#define IR2_THRESHOLD 855
-
-// Dip Switch & Push Button
-#define BIT0_PIN 9 // LSB
-#define BIT1_PIN 10
-#define BIT2_PIN 11 // MSB
-#define START_BUTTON 12
-
-void executeStrategy(int strategy, int ir1, int ir2, int distance1, int distance2, int diff);
+void setID();
+void read_dual_sensors();
 
 void setup()
 {
   Serial.begin(115200);
+  while (!Serial)
+    delay(1);
 
-  pinMode(BIT0_PIN, INPUT_PULLUP);
-  pinMode(BIT1_PIN, INPUT_PULLUP);
-  pinMode(BIT2_PIN, INPUT_PULLUP);
-  pinMode(START_BUTTON, INPUT_PULLUP);
-  pinMode(A1, OUTPUT);
-  pinMode(A6, INPUT);
-  pinMode(A7, INPUT);
-  digitalWrite(A1, HIGH);
+  // VL53L0X Setup
+  pinMode(SHT_LOX1, OUTPUT);
+  pinMode(SHT_LOX2, OUTPUT);
 
-  motors.begin();
+  digitalWrite(SHT_LOX1, LOW);
+  digitalWrite(SHT_LOX2, LOW);
 
-  Serial.println(("Initializing ToF Sensors..."));
+  setID();
 
-  if (!sensor1.begin(LOX1_ADDRESS))
-  {
-    Serial.println(F("Failed to initialize Sensor 1"));
-    while (1)
-      ;
-  }
+  // TPR-105F Setup
+  pinMode(IR1, INPUT);
+  pinMode(IR2, INPUT);
 
-  if (!sensor2.begin(LOX2_ADDRESS))
-  {
-    Serial.println(F("Failed to initialize Sensor 2"));
-    while (1)
-      ;
-  }
+  // TB6612FNG Setup
+  pinMode(AIN1, OUTPUT);
+  pinMode(AIN2, OUTPUT);
+  pinMode(BIN1, OUTPUT);
+  pinMode(BIN2, OUTPUT);
+  pinMode(STBY, OUTPUT);
+
+  ledcSetup(PWM_CHANNEL_A, PWM_FREQ, PWM_RESOLUTION);
+  ledcSetup(PWM_CHANNEL_B, PWM_FREQ, PWM_RESOLUTION);
+
+  ledcAttachPin(PWMA, PWM_CHANNEL_A);
+  ledcAttachPin(PWMB, PWM_CHANNEL_B);
 }
 
 void loop()
 {
-  bool start_button = digitalRead(START_BUTTON);
+  // int ir1_val = analogRead(IR1);
+  // int ir2_val = analogRead(IR2);
 
-  while (start_button == LOW)
+  // Serial.print("1: ");
+  // Serial.print(ir1_val);
+  // Serial.print("  2: ");
+  // Serial.println(ir2_val);
+
+  read_dual_sensors();
+
+  if (measure1.RangeMilliMeter < 100 && measure2.RangeMilliMeter < 100)
   {
-    int bit0 = !digitalRead(BIT0_PIN);
-    int bit1 = !digitalRead(BIT1_PIN);
-    int bit2 = !digitalRead(BIT2_PIN);
+    digitalWrite(STBY, HIGH);
 
-    int strategy = bit2 << 2 | bit1 << 1 | bit0;
-
-    int ir1 = analogRead(A6);
-    int ir2 = analogRead(A7);
-    int distance1 = sensor1.readDistance();
-    int distance2 = sensor2.readDistance();
-    delay(10);
-
-    int diff = distance1 - distance2;
-
-    Serial.print("Distance1: ");
-    Serial.print(distance1);
-    Serial.print(" Distance2: ");
-    Serial.println(distance2);
-
-    executeStrategy(strategy, ir1, ir2, distance1, distance2, diff);
+    digitalWrite(AIN2, HIGH);
+    digitalWrite(AIN1, LOW);
+    digitalWrite(BIN1, LOW);
+    digitalWrite(BIN2, HIGH);
+    ledcWrite(PWM_CHANNEL_A, SPEED);
+    ledcWrite(PWM_CHANNEL_B, SPEED);
   }
+  else if (measure1.RangeMilliMeter < 100)
+  {
+    digitalWrite(STBY, HIGH);
+
+    digitalWrite(AIN2, HIGH);
+    digitalWrite(AIN1, LOW);
+    digitalWrite(BIN1, LOW);
+    digitalWrite(BIN2, HIGH);
+    ledcWrite(PWM_CHANNEL_A, 0);
+    ledcWrite(PWM_CHANNEL_B, SPEED);
+  }
+  else if (measure2.RangeMilliMeter < 100)
+  {
+    digitalWrite(STBY, HIGH);
+
+    digitalWrite(AIN2, HIGH);
+    digitalWrite(AIN1, LOW);
+    digitalWrite(BIN1, LOW);
+    digitalWrite(BIN2, HIGH);
+    ledcWrite(PWM_CHANNEL_A, SPEED);
+    ledcWrite(PWM_CHANNEL_B, 0);
+  }
+  else
+  {
+    digitalWrite(STBY, LOW);
+  }
+
+  delay(250);
 }
 
-void executeStrategy(int strategy, int ir1, int ir2, int distance1, int distance2, int diff)
+void setID()
 {
-  static bool executed = false;
+  digitalWrite(SHT_LOX1, LOW);
+  digitalWrite(SHT_LOX2, LOW);
+  delay(10);
 
-  // if (distance1 < 150 || distance2 < 250)
-  // {
-  //   motors.forward(SPEED * 0.6);
-  //   return;
-  // }
+  digitalWrite(SHT_LOX1, HIGH);
+  digitalWrite(SHT_LOX2, HIGH);
+  delay(10);
 
-  switch (strategy)
+  digitalWrite(SHT_LOX1, HIGH);
+  digitalWrite(SHT_LOX2, LOW);
+
+  if (!lox1.begin(LOX1_ADDRESS))
   {
-  case 0: // Default
-    if (ir1 < IR1_THRESHOLD || ir2 < IR2_THRESHOLD)
-    {
-      motors.forward(SPEED * 0.1);
-    }
-    else
-    {
-      motors.backward(SPEED * .4);
-      delay(800);
-      motors.right(SPEED * .8);
-      delay(300);
-    }
-    break;
+    Serial.println(F("Failed to boot first VL53L0X"));
+    while (1)
+      ;
+  }
+  delay(10);
 
-  case 1: // Bait and Switch BETA
-    if (!executed)
-    {
-      motors.right(SPEED);
-      delay(500);
-      motors.left(SPEED);
-      delay(500);
-      executed = true;
-    }
+  digitalWrite(SHT_LOX2, HIGH);
+  delay(10);
 
-    if (ir1 < IR1_THRESHOLD || ir2 < IR2_THRESHOLD)
-    {
-      motors.forward(SPEED * 0.1);
-    }
-    else
-    {
-      motors.backward(SPEED * .4);
-      delay(1000);
-      motors.right(SPEED);
-      delay(500);
-    }
-    break;
-
-  case 2: // WOODPECKER BETA
-    if (!executed)
-    {
-      motors.forward(SPEED);
-      delay(250);
-      motors.backward(SPEED * 0.1);
-      delay(150);
-      motors.forward(SPEED);
-      delay(250);
-      motors.backward(SPEED * 0.1);
-      delay(150);
-      motors.forward(SPEED);
-      delay(250);
-      motors.backward(SPEED * 0.1);
-      delay(150);
-      executed = true;
-    }
-
-    if (ir1 < IR1_THRESHOLD || ir2 < IR2_THRESHOLD)
-    {
-      motors.forward(SPEED * 0.1);
-    }
-    else
-    {
-      motors.backward(SPEED * .4);
-      delay(1000);
-      motors.right(SPEED);
-      delay(500);
-    }
-
-    break;
-
-    // case 3: // SEARCH N DESTROY BETA
-    //   if (!executed)
-    //   {
-    //     motors.right(SPEED * 0.5);
-    //     delay(3000);
-    //     executed = true;
-    //   }
-
-    //   if (ir1 < IR1_THRESHOLD || ir2 < IR2_THRESHOLD)
-    //   {
-    //     motors.forward(SPEED * 0.1);
-    //   }
-    //   else
-    //   {
-    //     motors.backward(SPEED * .4);
-    //     delay(1000);
-    //     motors.right(SPEED);
-    //     delay(1000);
-    //   }
-    //   break;
-
-  case 4: // CALM BEFORE THE STORM
-    if (!executed)
-    {
-      motors.forward(SPEED * 0.1);
-      delay(1500);
-      executed = true;
-    }
-
-    if (ir1 < IR1_THRESHOLD || ir2 < IR2_THRESHOLD)
-    {
-      motors.forward(SPEED * 0.1);
-    }
-    else
-    {
-      motors.backward(SPEED * .4);
-      delay(1000);
-      motors.right(SPEED);
-      delay(500);
-    }
-    break;
-
-  case 5: // HESIVON
-    if (!executed)
-    {
-      delay(1500);
-      motors.backward(SPEED * 0.3);
-      delay(450);
-      executed = true;
-    }
-
-    if (ir1 < IR1_THRESHOLD || ir2 < IR2_THRESHOLD)
-    {
-      motors.forward(SPEED * 0.1);
-    }
-    else
-    {
-      motors.backward(SPEED * .4);
-      delay(1000);
-      motors.right(SPEED);
-      delay(500);
-    }
-    break;
-
-  case 6: // REVERSE BAIT AND SWITCH
-    if (!executed)
-    {
-      motors.left(SPEED);
-      delay(500);
-      motors.right(SPEED);
-      delay(500);
-      executed = true;
-    }
-
-    if (ir1 < IR1_THRESHOLD || ir2 < IR2_THRESHOLD)
-    {
-      motors.forward(SPEED * 0.1);
-    }
-    else
-    {
-      motors.backward(SPEED * .4);
-      delay(1000);
-      motors.right(SPEED);
-      delay(500);
-    }
-    break;
-
-  case 7: // CATAPULT
-    if (!executed)
-    {
-      motors.forward(SPEED);
-      delay(250);
-      motors.stop();
-      executed = true;
-    }
-
-    if (ir1 < IR1_THRESHOLD || ir2 < IR2_THRESHOLD)
-    {
-      motors.forward(SPEED * 0.1);
-    }
-    else
-    {
-      motors.backward(SPEED * .4);
-      delay(1000);
-      motors.right(SPEED);
-      delay(500);
-    }
-    break;
-
-  default:
-    motors.stop();
-    break;
+  if (!lox2.begin(LOX2_ADDRESS))
+  {
+    Serial.println(F("Failed to boot second VL53L0X"));
+    while (1)
+      ;
   }
 }
+
+void read_dual_sensors()
+{
+
+  lox1.rangingTest(&measure1, false);
+  lox2.rangingTest(&measure2, false);
+
+  Serial.print(F("1: "));
+  if (measure1.RangeStatus != 4)
+    Serial.print(measure1.RangeMilliMeter);
+  else
+    Serial.print(F("Out of range"));
+
+  Serial.print(F(" "));
+
+  Serial.print(F("2: "));
+  if (measure2.RangeStatus != 4)
+    Serial.print(measure2.RangeMilliMeter);
+  else
+    Serial.print(F("Out of range"));
+
+  Serial.println();
+}
+
+/*
+void setup()
+{
+  Serial.begin(115200);
+  while (!Serial)
+    ;
+  Serial.println("\nI2C Scanner");
+  Wire.begin();
+}
+
+void loop()
+{
+  byte error, address;
+  int nDevices = 0;
+  Serial.println("Scanning...");
+
+  for (address = 1; address < 127; address++)
+  {
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+
+    if (error == 0)
+    {
+      Serial.print("I2C device found at 0x");
+      Serial.println(address, HEX);
+      nDevices++;
+    }
+  }
+
+  if (nDevices == 0)
+    Serial.println("No I2C devices found.");
+  delay(2000);
+}
+*/
