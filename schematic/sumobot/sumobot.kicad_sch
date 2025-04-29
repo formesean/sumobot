@@ -5265,6 +5265,16 @@
 	)
 	(wire
 		(pts
+			(xy 176.53 215.9) (xy 179.07 215.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "22a14ae9-398a-497c-86ec-3de8c767432b")
+	)
+	(wire
+		(pts
 			(xy 30.48 166.37) (xy 33.02 166.37)
 		)
 		(stroke
@@ -5685,16 +5695,6 @@
 	)
 	(wire
 		(pts
-			(xy 179.07 210.82) (xy 176.53 210.82)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6e49aed3-4292-4322-b358-4c493bd5e9bf")
-	)
-	(wire
-		(pts
 			(xy 233.68 162.56) (xy 234.95 162.56)
 		)
 		(stroke
@@ -6055,6 +6055,16 @@
 	)
 	(wire
 		(pts
+			(xy 176.53 213.36) (xy 179.07 213.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a18b246c-fbd4-4c98-ab30-e6865c45729b")
+	)
+	(wire
+		(pts
 			(xy 85.09 87.63) (xy 86.36 87.63)
 		)
 		(stroke
@@ -6212,16 +6222,6 @@
 			(type default)
 		)
 		(uuid "b57ecbe9-7d72-449c-af86-a9dbda300ae2")
-	)
-	(wire
-		(pts
-			(xy 133.35 193.04) (xy 135.89 193.04)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b6029847-9db7-4427-8962-a86e0a370cf3")
 	)
 	(wire
 		(pts
@@ -6422,16 +6422,6 @@
 			(type default)
 		)
 		(uuid "df6160df-443b-4394-bbd0-22ffb7a9009f")
-	)
-	(wire
-		(pts
-			(xy 133.35 195.58) (xy 135.89 195.58)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "df75fbf6-29ad-4247-83ba-6add9b30c32b")
 	)
 	(wire
 		(pts
@@ -6715,28 +6705,6 @@
 			)
 		)
 	)
-	(global_label "IR1"
-		(shape input)
-		(at 133.35 193.04 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "0128160e-f3b6-49b1-af42-06056d5ac377")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 127.2805 193.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "AO2"
 		(shape input)
 		(at 97.79 116.84 0)
@@ -6759,7 +6727,7 @@
 			)
 		)
 	)
-	(global_label "IR4"
+	(global_label "IR2"
 		(shape input)
 		(at 133.35 200.66 180)
 		(fields_autoplaced yes)
@@ -7529,6 +7497,28 @@
 			)
 		)
 	)
+	(global_label "SHT_LOX4"
+		(shape input)
+		(at 179.07 215.9 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "629805d6-d9bd-4f65-9204-7f5deb9f7ac3")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 191.308 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "-5V Batt"
 		(shape input)
 		(at 270.51 217.17 0)
@@ -8233,6 +8223,28 @@
 			)
 		)
 	)
+	(global_label "SHT_LOX3"
+		(shape input)
+		(at 179.07 213.36 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c3b22b87-38aa-4297-8ec5-f0fd14474998")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 191.308 213.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "+5V Batt"
 		(shape input)
 		(at 283.21 81.28 0)
@@ -8246,28 +8258,6 @@
 		(uuid "c4cb51d4-934a-4822-8649-ac4a7a4f7485")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 294.9037 81.28 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "SHT_LOX3"
-		(shape input)
-		(at 179.07 210.82 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c52c4b2d-1e6d-412f-add1-2a953d4d7fa9")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 191.308 210.82 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8519,29 +8509,7 @@
 			)
 		)
 	)
-	(global_label "IR2"
-		(shape input)
-		(at 133.35 195.58 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "eb5d3ca7-f9ac-4034-a886-9990f60aeb1b")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 127.2805 195.58 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "IR3"
+	(global_label "IR1"
 		(shape input)
 		(at 133.35 198.12 180)
 		(fields_autoplaced yes)

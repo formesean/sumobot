@@ -8,8 +8,9 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "D:/sumobot/include",
                 "D:/sumobot/src",
+                "D:/sumobot/.pio/libdeps/esp32dev/ESP32AnalogRead",
+                "D:/sumobot/.pio/libdeps/esp32dev/IRremoteESP8266/src",
                 "D:/sumobot/.pio/libdeps/esp32dev/Adafruit_VL53L0X/src",
                 "C:/Users/seana/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 "C:/Users/seana/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
@@ -248,8 +249,9 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "D:/sumobot/include",
                     "D:/sumobot/src",
+                    "D:/sumobot/.pio/libdeps/esp32dev/ESP32AnalogRead",
+                    "D:/sumobot/.pio/libdeps/esp32dev/IRremoteESP8266/src",
                     "D:/sumobot/.pio/libdeps/esp32dev/Adafruit_VL53L0X/src",
                     "C:/Users/seana/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     "C:/Users/seana/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
@@ -489,6 +491,7 @@
             "defines": [
                 "PLATFORMIO=60118",
                 "ARDUINO_ESP32_DEV",
+                "CONFIG_IDF_TARGET_ESP32",
                 "HAVE_CONFIG_H",
                 "MBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\"",
                 "UNITY_INCLUDE_CONFIG_H",
