@@ -27,22 +27,48 @@ public:
     pinMode(EMITTER_RIGHT, OUTPUT);
   }
 
-  void line_emitter_on()
+  void line_both_emitter_on()
   {
     digitalWrite(EMITTER_LEFT, HIGH);
     digitalWrite(EMITTER_RIGHT, HIGH);
   }
 
-  void line_emitter_off()
+  void line_both_emitter_off()
   {
     digitalWrite(EMITTER_LEFT, LOW);
     digitalWrite(EMITTER_RIGHT, LOW);
   }
 
+  void line_left_emitter_on()
+  {
+    digitalWrite(EMITTER_LEFT, HIGH);
+  }
+
+  void line_left_emitter_off()
+  {
+    digitalWrite(EMITTER_LEFT, HIGH);
+  }
+
+  void line_right_emitter_on()
+  {
+    digitalWrite(EMITTER_RIGHT, HIGH);
+  }
+
+  void line_right_emitter_off()
+  {
+    digitalWrite(EMITTER_RIGHT, LOW);
+  }
+
   void read_all()
   {
+    line_both_emitter_off();
+    line_left_emitter_on();
+    delayMicroseconds(100);
     m_ir_left = adc.fast_read(LINE_LEFT);
+    line_right_emitter_on();
+    delayMicroseconds(100);
     m_ir_right = adc.fast_read(LINE_RIGHT);
+    line_both_emitter_off();
 
     m_dist1 = adc.fast_read(DIST_LEFT);
     m_dist2 = adc.fast_read(DIST_MIDDLE);
